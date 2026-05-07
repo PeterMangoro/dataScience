@@ -126,3 +126,5 @@ Decision depends on objective:
 
 Future improvements should focus on target redesign and imbalance handling (especially for ultra-rare classes), plus data/label strategies that make tail classes learnable.
 
+Limitations: class support is highly skewed in the latent `k=6` target, including ultra-rare classes (for example, supports near 1-4 samples in the test split), which makes stable learning and evaluation difficult regardless of architecture. Consequently, macro-F1 improvements should be interpreted as directional rather than definitive for tail classes, and future iterations should prioritize rebalanced labeling/data strategies before expecting large model-only gains.
+
