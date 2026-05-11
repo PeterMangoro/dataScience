@@ -21,7 +21,9 @@ sns.set_theme(style="whitegrid")
 RANDOM_STATE = 42
 np.random.seed(RANDOM_STATE)
 
-DATA_PATH = Path("/home/themad/Documents/yeshiva/dataScience/assignments/GDP/data.csv")
+GDP_DIR = Path(".").resolve()
+DATA_FILENAME = "data.csv"
+DATA_PATH = GDP_DIR / DATA_FILENAME
 
 
 # ## Data Generating Process Hypothesis
