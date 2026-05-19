@@ -1,7 +1,13 @@
 # Amazon Review Sentiment Analysis — Course Final Project
 
-**Team:** 4  
-**Course deadline:** May 18, 2026  
+**Team:**  
+
+- Innocent Mujokoro
+- Tapiwanashe Mutarimanja⁠
+- Satya Sai Priya Devireddy⁠
+- ⁠Masheia Dzimba
+- ⁠Peter Mangoro
+
 **Dataset:** [Amazon Reviews (Kaggle)](https://www.kaggle.com/datasets/bittlingmayer/amazonreviews)
 
 ---
@@ -12,12 +18,14 @@ This project is the **course final (Option 4: Amazon Reviews)** for a data scien
 
 The work is documented in a single reproducible technical report:
 
-| Artifact | Description |
-|----------|-------------|
-| [`final_notebook.ipynb`](final_notebook.ipynb) | Full analysis: EDA, baselines, unsupervised discovery, neural/Transformer models, leakage audit, locked test |
-| [`final_notebook.pdf`](final_notebook.pdf) | Exported report |
-| [`Amazon_Sentiment_ArchitectureFinal.pdf`](Amazon_Sentiment_ArchitectureFinal.pdf) | System / pipeline architecture overview |
-| [`Amazon_Sentiment_ArchitectureFinal.pptx`](Amazon_Sentiment_ArchitectureFinal.pptx) | Architecture slides |
+
+| Artifact                                                                             | Description                                                                                                  |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `[final_notebook.ipynb](final_notebook.ipynb)`                                       | Full analysis: EDA, baselines, unsupervised discovery, neural/Transformer models, leakage audit, locked test |
+| `[final_notebook.pdf](final_notebook.pdf)`                                           | Exported report                                                                                              |
+| `[Amazon_Sentiment_ArchitectureFinal.pdf](Amazon_Sentiment_ArchitectureFinal.pdf)`   | System / pipeline architecture overview                                                                      |
+| `[Amazon_Sentiment_ArchitectureFinal.pptx](Amazon_Sentiment_ArchitectureFinal.pptx)` | Architecture slides                                                                                          |
+
 
 We treat the task as **associative prediction** on observed reviews—not causal inference about product quality. Labels reflect **expressed sentiment in text**, subject to reviewer bias and selection (only some customers leave reviews).
 
@@ -34,10 +42,12 @@ We treat the task as **associative prediction** on observed reviews—not causal
 
 ## Data
 
-| File | Rows | Role |
-|------|------|------|
+
+| File                | Rows      | Role                                                        |
+| ------------------- | --------- | ----------------------------------------------------------- |
 | `data/train.ft.txt` | 3,600,000 | Development, fitting, internal validation, cross-validation |
-| `data/test.ft.txt` | 400,000 | **Held out** until Section 7.3 — one locked evaluation only |
+| `data/test.ft.txt`  | 400,000   | **Held out** until Section 7.3 — one locked evaluation only |
+
 
 **Download:** [Kaggle — Amazon Reviews](https://www.kaggle.com/datasets/bittlingmayer/amazonreviews). Extract `train.ft.txt` and `test.ft.txt` into `final/data/`.
 
@@ -63,6 +73,8 @@ flowchart LR
   H --> I[Locked test on test.ft.txt]
 ```
 
+
+
 ### 1. Exploratory analysis and framing
 
 - Data-generating process (DGP) narrative: latent factors (expectations, shipping, category norms) → language → observed label.
@@ -71,12 +83,14 @@ flowchart LR
 
 ### 2. Representations
 
-| Representation | Settings | Use |
-|----------------|----------|-----|
-| TF–IDF bag-of-words | 1–2 grams, `max_features=300k`, `min_df=5`, `sublinear_tf` | Linear models, MLP, ablations |
-| Truncated SVD (200 dims) | On TF–IDF, train sample | K-means on lexical factors |
-| Sentence embeddings | `all-MiniLM-L6-v2`, 384-d, L2-normalized | Semantic K-means |
-| Subword tokens | DistilBERT, `max_length=96` | Contextual classifier |
+
+| Representation           | Settings                                                   | Use                           |
+| ------------------------ | ---------------------------------------------------------- | ----------------------------- |
+| TF–IDF bag-of-words      | 1–2 grams, `max_features=300k`, `min_df=5`, `sublinear_tf` | Linear models, MLP, ablations |
+| Truncated SVD (200 dims) | On TF–IDF, train sample                                    | K-means on lexical factors    |
+| Sentence embeddings      | `all-MiniLM-L6-v2`, 384-d, L2-normalized                   | Semantic K-means              |
+| Subword tokens           | DistilBERT, `max_length=96`                                | Contextual classifier         |
+
 
 ### 3. Supervised models
 
@@ -124,24 +138,28 @@ flowchart LR
 
 ### Strong, stable sentiment classification
 
-| Evaluation | F1 | ROC-AUC | Notes |
-|--------------|-----|---------|--------|
-| Validation (500k cap, TF–IDF + SGD) | ~0.907 | ~0.966 | 400k train / 100k val |
-| 5-fold CV (500k cap) | **0.9071 ± 0.0011** | **0.9660 ± 0.0006** | Stable across folds |
-| **Locked test** (`test.ft.txt`, 400k rows) | **0.9056** | **0.9660** | Accuracy ~0.905; one-time held-out eval |
+
+| Evaluation                                 | F1                  | ROC-AUC             | Notes                                   |
+| ------------------------------------------ | ------------------- | ------------------- | --------------------------------------- |
+| Validation (500k cap, TF–IDF + SGD)        | ~0.907              | ~0.966              | 400k train / 100k val                   |
+| 5-fold CV (500k cap)                       | **0.9071 ± 0.0011** | **0.9660 ± 0.0006** | Stable across folds                     |
+| **Locked test** (`test.ft.txt`, 400k rows) | **0.9056**          | **0.9660**          | Accuracy ~0.905; one-time held-out eval |
+
 
 Locked-test metrics align with development and CV within ~0.001 F1, supporting a trustworthy deployment estimate.
 
 ### Rigorous comparison across model families
 
-| Model | Approx. dev F1 | Role |
-|-------|----------------|------|
-| TF–IDF + SGD (500k cap) | ~0.907 | **Recommended deployment** |
-| TF–IDF + Logistic Regression | ~0.907 | Equivalent to SGD on this featurization |
-| TF–IDF + Random Forest | ~0.83–0.84 | Nonlinear classical baseline |
-| TF–IDF + SGD (120k matched) | ~0.898 | Fair comparison to neural runs |
-| MLP (120k) | ~0.888 | Neural BoW baseline |
-| DistilBERT (120k, partial fine-tune) | ~0.874 | Higher precision, lower recall |
+
+| Model                                | Approx. dev F1 | Role                                    |
+| ------------------------------------ | -------------- | --------------------------------------- |
+| TF–IDF + SGD (500k cap)              | ~0.907         | **Recommended deployment**              |
+| TF–IDF + Logistic Regression         | ~0.907         | Equivalent to SGD on this featurization |
+| TF–IDF + Random Forest               | ~0.83–0.84     | Nonlinear classical baseline            |
+| TF–IDF + SGD (120k matched)          | ~0.898         | Fair comparison to neural runs          |
+| MLP (120k)                           | ~0.888         | Neural BoW baseline                     |
+| DistilBERT (120k, partial fine-tune) | ~0.874         | Higher precision, lower recall          |
+
 
 ### Other outcomes
 
@@ -180,22 +198,17 @@ final/
 ## How to reproduce
 
 1. **Clone** the repository and `cd` into `final/`.
-
 2. **Create a virtual environment** and install dependencies (minimum set used in the notebook):
-
-   ```bash
+  ```bash
    python -m venv .venv
    source .venv/bin/activate
    pip install pandas numpy matplotlib seaborn scikit-learn torch transformers sentence-transformers tqdm
-   ```
-
+  ```
 3. **Download data** from Kaggle into `final/data/` as `train.ft.txt` and `test.ft.txt`.
-
 4. **Open and run** `final_notebook.ipynb`:
-   - **Restart kernel** and run all cells top-to-bottom.
-   - **Do not** load or tune on `test.ft.txt` until **Section 7.3**.
-   - Slow sections: Section 4 baselines (~500k rows), Random Forest, DistilBERT training, Section 7.2 CV, Section 7.3 locked predict.
-
+  - **Restart kernel** and run all cells top-to-bottom.
+  - **Do not** load or tune on `test.ft.txt` until **Section 7.3**.
+  - Slow sections: Section 4 baselines (~500k rows), Random Forest, DistilBERT training, Section 7.2 CV, Section 7.3 locked predict.
 5. **Optional:** For Hugging Face model download (DistilBERT), set `HF_TOKEN` in a local `.env` file — **never commit tokens** to version control.
 
 To scale up classical training, increase `BASELINE_TRAIN_MAX_ROWS` in the notebook (or set to `None` for a full `train.ft.txt` pass) after pipelines are verified.
@@ -206,4 +219,4 @@ To scale up classical training, increase `BASELINE_TRAIN_MAX_ROWS` in the notebo
 
 Under a **leakage-safe** protocol on a large Amazon review corpus, a well-tuned **TF–IDF + linear SVM (SGD)** pipeline delivers **~90.6% F1** and **~96.6% ROC-AUC** on a held-out test set of 400k reviews—matching cross-validation and internal validation. More complex models (Random Forest, MLP, DistilBERT) were implemented and compared for course coverage and interpretability, but **sparse lexical features with a linear margin** remain the practical choice for this task at our training scale.
 
-For full figures, tables, code, and section-by-section discussion, see **`final_notebook.ipynb`** or **`final_notebook.pdf`**.
+For full figures, tables, code, and section-by-section discussion, see `**final_notebook.ipynb`** or `**final_notebook.pdf`**.
