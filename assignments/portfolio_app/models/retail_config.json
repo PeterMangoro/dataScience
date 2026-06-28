@@ -1,0 +1,16 @@
+{
+  "vocab_size": 3600,
+  "num_numeric": 3,
+  "num_classes": 6,
+  "max_len": 120,
+  "emb_dim": 64,
+  "num_dim": 16,
+  "n_heads": 4,
+  "ff_dim": 128,
+  "dropout": 0.1,
+  "num_cols": [
+    "Quantity",
+    "UnitPrice",
+    "LineAmount"
+  ]
+}

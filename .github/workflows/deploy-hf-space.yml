@@ -1,0 +1,37 @@
+name: Deploy portfolio to Hugging Face Space
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: hf-space-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync subfolder to HF Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_USERNAME: PeterMangoro
+          SPACE_ID: PeterMangoro/ml-demo
+        run: |
+          set -euo pipefail
+          git lfs install
+          WORK="$(mktemp -d)"
+          cp -r assignments/portfolio_app/. "$WORK/"
+          cd "$WORK"
+          rm -rf .git __pycache__ */__pycache__ flagged .gradio
+          git init -q
+          git lfs track "*.joblib" "*.pt" >/dev/null
+          git config user.email "actions@users.noreply.github.com"
+          git config user.name "github-actions"
+          git add -A
+          git commit -q -m "Deploy ${GITHUB_REPOSITORY}@${GITHUB_SHA::7}"
+          git branch -M main
+          git push --force "https://${HF_USERNAME}:${HF_TOKEN}@huggingface.co/spaces/${SPACE_ID}" main

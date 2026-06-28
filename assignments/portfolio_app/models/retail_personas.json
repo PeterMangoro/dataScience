@@ -1,0 +1,80 @@
+{
+  "0": {
+    "name": "One-off / low-engagement buyers",
+    "description": "~2 invoices, $575 spend, 49d recency, 190d between orders.",
+    "share": 0.0839,
+    "profile": {
+      "n_invoices": 2.0,
+      "total_spend": 574.735,
+      "avg_invoice_value": 269.327,
+      "recency_days": 49.0,
+      "mean_interpurchase_days": 190.0,
+      "item_diversity_ratio": 0.112
+    }
+  },
+  "1": {
+    "name": "Lapsed shoppers",
+    "description": "~1 invoices, $317 spend, 122d recency, 54d between orders.",
+    "share": 0.4643,
+    "profile": {
+      "n_invoices": 1.0,
+      "total_spend": 317.455,
+      "avg_invoice_value": 271.35,
+      "recency_days": 122.5,
+      "mean_interpurchase_days": 53.5,
+      "item_diversity_ratio": 0.065
+    }
+  },
+  "2": {
+    "name": "Frequent regulars",
+    "description": "~6 invoices, $1,861 spend, 21d recency, 38d between orders.",
+    "share": 0.3619,
+    "profile": {
+      "n_invoices": 6.0,
+      "total_spend": 1861.39,
+      "avg_invoice_value": 314.03,
+      "recency_days": 21.0,
+      "mean_interpurchase_days": 38.333,
+      "item_diversity_ratio": 0.234
+    }
+  },
+  "3": {
+    "name": "Occasional buyers",
+    "description": "~4 invoices, $1,080 spend, 25d recency, 93d between orders.",
+    "share": 0.0832,
+    "profile": {
+      "n_invoices": 4.0,
+      "total_spend": 1079.61,
+      "avg_invoice_value": 276.766,
+      "recency_days": 25.0,
+      "mean_interpurchase_days": 93.333,
+      "item_diversity_ratio": 0.181
+    }
+  },
+  "4": {
+    "name": "Wholesale / bulk buyers",
+    "description": "~2 invoices, $122,828 spend, 162d recency, 129d between orders.",
+    "share": 0.0005,
+    "profile": {
+      "n_invoices": 1.5,
+      "total_spend": 122828.05,
+      "avg_invoice_value": 80709.925,
+      "recency_days": 162.5,
+      "mean_interpurchase_days": 129.25,
+      "item_diversity_ratio": 0.0
+    }
+  },
+  "5": {
+    "name": "VIP loyal big spenders",
+    "description": "~55 invoices, $58,510 spend, 3d recency, 7d between orders.",
+    "share": 0.0062,
+    "profile": {
+      "n_invoices": 55.0,
+      "total_spend": 58510.48,
+      "avg_invoice_value": 1136.128,
+      "recency_days": 3.0,
+      "mean_interpurchase_days": 6.704,
+      "item_diversity_ratio": 0.281
+    }
+  }
+}

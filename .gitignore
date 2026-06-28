@@ -3,3 +3,7 @@ job.md
 final/.venv
 final/data
 final/archive.zip
+
+__pycache__/
+*.pyc
+.gradio/
