@@ -18,8 +18,21 @@ _bundle = joblib.load(MODEL_PATH)
 _model = _bundle["model"]
 _consts = _bundle["consts"]
 
+# Representative California coordinates so users pick a place, not raw lat/lon.
+CA_LOCATIONS = {
+    "Los Angeles": (34.05, -118.24),
+    "San Francisco": (37.77, -122.42),
+    "San Diego": (32.72, -117.16),
+    "San Jose": (37.34, -121.89),
+    "Sacramento": (38.58, -121.49),
+    "Fresno (Central Valley)": (36.74, -119.79),
+    "Santa Barbara (coastal)": (34.42, -119.70),
+    "Bakersfield (inland)": (35.37, -119.02),
+}
 
-def predict(med_inc, house_age, ave_rooms, ave_bedrms, population, ave_occup, latitude, longitude):
+
+def predict(med_inc, house_age, ave_rooms, ave_bedrms, population, ave_occup, location):
+    latitude, longitude = CA_LOCATIONS[location]
     row = pd.DataFrame(
         [[med_inc, house_age, ave_rooms, ave_bedrms, population, ave_occup, latitude, longitude]],
         columns=RAW_COLS,
@@ -38,8 +51,12 @@ def build_housing_tab() -> gr.Interface:
         gr.Slider(0.5, 2.0, value=1.1, step=0.05, label="Average bedrooms per household"),
         gr.Slider(3, 12000, value=1166, step=1, label="Block-group population"),
         gr.Slider(1.0, 8.0, value=3.0, step=0.1, label="Average household occupancy"),
-        gr.Slider(32.5, 42.0, value=34.0, step=0.1, label="Latitude"),
-        gr.Slider(-124.3, -114.3, value=-118.5, step=0.1, label="Longitude"),
+        gr.Dropdown(
+            choices=list(CA_LOCATIONS.keys()),
+            value="Los Angeles",
+            label="Location",
+            info="California region (sets latitude/longitude for the model)",
+        ),
     ]
     return gr.Interface(
         fn=predict,
